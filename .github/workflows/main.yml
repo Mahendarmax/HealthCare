@@ -28,7 +28,9 @@ jobs:
             maven-${{ runner.os }}-
 
       - name: Build and test with Maven (Debug Mode)
-        run: mvn clean test -X -e
+        run: |
+          mvn clean test -X -e \
+            -DargLine="--add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"
 
       - name: Upload Test Reports (JUnit)
         if: always()
