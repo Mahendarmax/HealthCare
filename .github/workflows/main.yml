@@ -1,35 +1,47 @@
-name: Maven Test Pipeline
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - pom.xml
+      - src/**
 
-on:
-  push:
-    branches: [ master ]  
+pool:
+  vmImage: 'ubuntu-latest'
 
-jobs:
-  build-test:
-    runs-on: ubuntu-latest
+variables:
+  JAVA_VERSION: '17'
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+steps:
+  - task: Cache@2
+    inputs:
+      key: 'maven | "$(Agent.OS)" | **/pom.xml'
+      path: $(MAVEN_CACHE_FOLDER)
+      restoreKeys: 'maven | "$(Agent.OS)"'
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'
+  - task: UseJavaVersion@1
+    inputs:
+      versionSpec: '$(JAVA_VERSION)'
+      architecture: 'x64'
 
-      - name: Clear Maven Cache
-        run: rm -rf ~/.m2/repository
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean install'
+      options: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      codeCoverageToolOption: 'JaCoCo'
 
-      - name: Build and test with Maven
-        run: |
-          mvn clean test -e -X \
-            -DargLine="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED"
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(Build.SourcesDirectory)/target'
+      Contents: '**/*.jar'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-      - name: Upload Test Reports (JUnit)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: junit-test-results
-          path: target/surefire-reports/*.xml
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
