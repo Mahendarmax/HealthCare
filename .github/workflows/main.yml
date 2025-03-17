@@ -6,38 +6,18 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest  # Use Windows agent
-    permissions:
-      contents: read  # Minimal permissions
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: 17
-        distribution: temurin
-        cache: maven  # Enables built-in Maven caching
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~\.m2\repository  # Windows path for Maven cache
-        key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          maven-${{ runner.os }}-
-
-    - name: Run tests
-      run: |
-        mvn -B clean test -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -DargLine="--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"
-
-    - name: Upload test reports
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: |
-          target\surefire-reports\**
-          target\failsafe-reports\**
+      - name: Build and test with Maven
+        run: mvn clean test
