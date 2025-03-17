@@ -15,24 +15,12 @@
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>5.11.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
-    <!-- Lombok Dependencies -->
+    <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.30</version> <!-- Latest version -->
+      <version>1.18.30</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -49,48 +37,11 @@
       <version>4.11.0</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-devtools-v131</artifactId>
-      <version>4.27.0</version>
-    </dependency>
-
     <!-- WebDriverManager -->
     <dependency>
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
       <version>5.8.0</version>
-    </dependency>
-
-    <!-- Extent Reports -->
-    <dependency>
-      <groupId>com.aventstack</groupId>
-      <artifactId>extentreports</artifactId>
-      <version>5.0.9</version>
-    </dependency>
-
-    <!-- Logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.20.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>2.20.0</version>
-    </dependency>
-
-    <!-- SLF4J -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>2.0.0-alpha1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.32</version>
     </dependency>
 
     <!-- TestNG -->
@@ -99,13 +50,6 @@
       <artifactId>testng</artifactId>
       <version>7.9.0</version>
       <scope>test</scope>
-    </dependency>
-
-    <!-- Java Faker -->
-    <dependency>
-      <groupId>com.github.javafaker</groupId>
-      <artifactId>javafaker</artifactId>
-      <version>1.0.2</version>
     </dependency>
   </dependencies>
 
@@ -119,9 +63,6 @@
           <version>3.11.0</version>
           <configuration>
             <release>17</release>
-            <compilerArgs>
-              --add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
-            </compilerArgs>
             <annotationProcessorPaths>
               <path>
                 <groupId>org.projectlombok</groupId>
@@ -137,28 +78,8 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.3.0</version>
           <configuration>
-            <suiteXmlFiles>
-              <suiteXmlFile>testng.xml</suiteXmlFile>
-            </suiteXmlFiles>
+            <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
           </configuration>
-        </plugin>
-
-        <!-- Jar Plugin -->
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.4.2</version>
-        </plugin>
-
-        <!-- Install Plugin -->
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.2</version>
-        </plugin>
-
-        <!-- Deploy Plugin -->
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
