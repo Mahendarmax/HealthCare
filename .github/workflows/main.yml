@@ -1,0 +1,43 @@
+name: Maven Test Pipeline
+
+on:
+  push:
+    branches:
+      - master  # Trigger on push to the main branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
+
+    steps:
+      # Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Java (Maven requires Java)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # Specify your Java version (e.g., 11, 17)
+          distribution: 'temurin'  # Use Temurin (Adoptium) JDK
+
+      # Cache Maven dependencies to speed up builds
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      # Build the project and run tests
+      - name: Build and test with Maven
+        run: mvn clean test
+
+      # Optional: Upload test results as an artifact
+      - name: Upload test results
+        if: always()  # Upload even if tests fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: target/surefire-reports  # Path to test reports (JUnit format)
