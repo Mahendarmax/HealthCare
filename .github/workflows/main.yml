@@ -37,7 +37,7 @@ jobs:
       # Optional: Upload test results as an artifact
       - name: Upload test results
         if: always()  # Upload even if tests fail
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 
         with:
           name: test-results
           path: target/surefire-reports  # Path to test reports (JUnit format)
