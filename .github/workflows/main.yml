@@ -5,64 +5,6 @@ on:
     branches: [ master ]  
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read  # Minimal permissions
-      security-events: write  # For security scanning
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: 17
-        distribution: temurin
-
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: maven-${{ runner.os }}-${{ hashFiles('pom.xml') }}  # Specific to root POM
-        restore-keys: |
-          maven-${{ runner.os }}-
-
-    - name: Build, test, and generate code coverage with Maven
-      run: |
-        mvn clean verify -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-        mvn jacoco:report  # Generate JaCoCo coverage report
-      # Removed MAVEN_OPTS exposing internal JDK packages
-
-    - name: Dependency Check (Security Scan)
-      uses: dependency-check/Dependency-Check_Action@main
-      with:
-        project: 'your-project-name'
-        format: 'HTML'
-        fail_on_cvss: 7  # Fail if critical vulnerabilities are found
-
-    - name: Upload test reports
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: |
-          target/surefire-reports/**
-          target/failsafe-reports/**
-
-    - name: Upload code coverage report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-coverage-report
-        path: target/site/jacoco/  # JaCoCo report directory
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: target/site/jacoco/jacoco.xml  # Path to JaCoCo XML report
-        fail_ci_if_error: true  # Fail the build if coverage upload failsjobs:
   test:
     runs-on: windows-latest  # Use Windows agent
     permissions:
@@ -99,10 +41,3 @@ jobs:
         path: |
           target\surefire-reports\**
           target\failsafe-reports\**
-
-    - name: Upload code coverage report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-coverage-report
-        path: target\site\jacoco\  # JaCoCo report directory 
