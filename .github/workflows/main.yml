@@ -19,18 +19,13 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-${{ runner.os }}-
+      - name: Clear Maven Cache
+        run: rm -rf ~/.m2/repository
 
-      - name: Build and test with Maven (Debug Mode)
+      - name: Build and test with Maven
         run: |
-          mvn clean test -X -e \
-            -DargLine="--add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"
+          mvn clean test -e -X \
+            -DargLine="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED"
 
       - name: Upload Test Reports (JUnit)
         if: always()
