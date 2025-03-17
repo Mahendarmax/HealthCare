@@ -58,8 +58,8 @@ jobs:
         name: code-coverage-report
         path: target/site/jacoco/  # JaCoCo report directory
 
-    - name: Publish Code Coverage to GitHub
-      uses: actions/codecov@v3
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
       with:
         file: target/site/jacoco/jacoco.xml  # Path to JaCoCo XML report
         fail_ci_if_error: true  # Fail the build if coverage upload fails
