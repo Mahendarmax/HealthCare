@@ -30,7 +30,7 @@ jobs:
 
     - name: Run tests
       run: |
-        mvn clean test -B -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -DargLine="--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"
+        mvn -B -Dorg.slf4j.simpleLogger.defaultLogLevel=warn clean test -DargLine="--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"
 
     - name: Upload test reports
       if: always()
