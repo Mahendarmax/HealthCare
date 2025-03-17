@@ -19,18 +19,19 @@ jobs:
       with:
         java-version: 17
         distribution: temurin
+        cache: maven  # Enables built-in Maven caching
 
     - name: Cache Maven dependencies
       uses: actions/cache@v3
       with:
-        path: C:\Users\runneradmin\.m2\repository  # Correct Windows path
-        key: maven-${{ runner.os }}-${{ hashFiles('pom.xml') }}
+        path: ~\.m2\repository  # Windows path for Maven cache
+        key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           maven-${{ runner.os }}-
 
     - name: Run tests
       run: |
-        mvn -B -Dorg.slf4j.simpleLogger.defaultLogLevel=warn clean test -DargLine="--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"
+        mvn -B clean test -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -DargLine="--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"
 
     - name: Upload test reports
       if: always()
@@ -38,5 +39,5 @@ jobs:
       with:
         name: test-results
         path: |
-          target/surefire-reports/**
-          target/failsafe-reports/**
+          target\surefire-reports\**
+          target\failsafe-reports\**
