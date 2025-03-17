@@ -28,10 +28,9 @@ jobs:
         restore-keys: |
           maven-${{ runner.os }}-
 
-    - name: Run tests and generate code coverage
+    - name: Run tests
       run: |
         mvn clean test -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -DargLine="--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"
-        mvn jacoco:report  # Generate JaCoCo coverage report
 
     - name: Upload test reports
       if: always()
